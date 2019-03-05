@@ -1,0 +1,106 @@
+<?php
+
+namespace common\models\member;
+
+use Yii;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
+
+/**
+ * This is the model class for table "{{%orders}}".
+ *
+ * @property int $id
+ * @property string $pending_id 挂单号
+ * @property string $buyer 买方id
+ * @property string $seller 卖方id
+ * @property string $asset_num 订单资产数量
+ * @property string $order_id 订单号
+ * @property string $create_at 订单创建时间
+ * @property string $update_at 订单更新时间
+ * @property string $status 订单状态
+ * @property string $fee 手续费
+ */
+class Orders extends \yii\db\ActiveRecord
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return '{{%orders}}';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['pending_id','asset_num','buyer','seller','asset_name'], 'required'],
+            [['pending_id', 'buyer','asset_name', 'order_id', 'create_at', 'update_at', 'status', 'fee'], 'string', 'max' => 50],
+            [['seller'], 'string', 'max' => 255],
+            [['asset_num'], 'string', 'max' => 20],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'pending_id' => '挂单号',
+            'buyer' => '买方id',
+            'seller' => '卖方id',
+            'asset_name' => '资产名称',
+            'asset_num' => '资产数量',
+            'order_id' => '订单号',
+            'create_at' => '订单创建时间',
+            'update_at' => '订单更新时间',
+            'status' => '订单状态',
+            'fee' => '手续费',
+        ];
+    }
+
+    /**
+     * 行为插入时间戳
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['create_at','update_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['update_at'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     *  用户下订单
+     * */
+    public function bind()
+    {
+
+        if (!$this->validate()) {
+            return null;
+        }
+        $wallet = new Orders();
+        $wallet->pending_id = $this->pending_id;
+        $wallet->buyer = $this->buyer;
+        $wallet->seller = $this->seller;
+        $wallet->order_id = $this->pending_id.$wallet->buyer.$wallet->seller;
+
+        $wallet->asset_name = $this->asset_name;
+        $wallet->asset_num = $this->asset_num;
+
+
+        return $wallet->save() ? $wallet : null;
+    }
+
+
+}

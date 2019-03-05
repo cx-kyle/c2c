@@ -1,0 +1,36 @@
+<?php
+return [
+    'components' => [
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=127.0.0.1;dbname=rageframe',
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8mb4',
+            'tablePrefix' => 'rf_',
+            // 'enableSchemaCache' => true, // 是否开启缓存, 请了解其中机制在开启，不了解谨慎
+            // 'schemaCacheDuration' => 3600, // 缓存时间
+            // 'schemaCache' => 'cache', // 缓存名称
+        ],
+        /**
+        // redis缓存
+        'cache' => [
+            'class' => 'yii\redis\Cache',
+        ],
+        // session写入缓存配置
+        'session' => [
+            'class' => 'yii\redis\Session',
+            'redis' => [
+                'class' => 'yii\redis\Connection',
+                'hostname' => 'localhost',
+                'port' => 6379,
+                'database' => 0,
+            ],
+        ],
+         */
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@common/mail',
+        ],
+    ],
+];
